@@ -13,6 +13,8 @@ export const HOME_SCREENS = {
 	CHAT_SCREEN: "Chat",
 	REVENUE_SCREEN: "Revenue",
 	SETTINGS_SCREEN: "Settings",
+	ALL_GROUPS_SCREEN: "All Groups",
+	GROUP_DETAIL_SCREEN: "Group Detail",
 } as const;
 
 export const DISCOVER_SCREENS = {

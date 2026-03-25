@@ -226,7 +226,6 @@ features/[feature-name]/
 
 #### **discover/** - Discovery
 - `DiscoverScreen.tsx` - Browse/discover content
-- `DetailGroupScreen.tsx` - Group details view
 
 #### **profile/** - User Profile
 - `ProfileScreen.tsx` - User profile display

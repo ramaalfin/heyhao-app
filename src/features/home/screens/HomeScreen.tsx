@@ -9,19 +9,27 @@ import {
 	View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import Avatar from "@components/Avatar";
 import AwareView from "@components/AwareView";
 import useGroup from "@hooks/useGroup";
 import useAuth from "@hooks/useAuth";
 import type { Group, OwnGroupResponse } from "@services/api/group/types";
+import { HOME_SCREENS } from "@utils/screens";
+import type { HomeStackParams } from "@navigation/stacks/HomeStack";
+
+type NavigationProp = NativeStackNavigationProp<HomeStackParams>;
 
 const HomeScreen = () => {
+	const navigation = useNavigation<NavigationProp>();
 	const { user } = useAuth();
 	const { getOwnGroups, getGroups, isLoading } = useGroup();
 
 	const [ownGroups, setOwnGroups] = useState<OwnGroupResponse | null>(null);
 	const [discoverGroups, setDiscoverGroups] = useState<Group[]>([]);
+	const [suggestedGroups, setSuggestedGroups] = useState<Group[]>([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -32,6 +40,11 @@ const HomeScreen = () => {
 				]);
 				setOwnGroups(own);
 				setDiscoverGroups(discover);
+
+				// Filter suggested groups - exclude groups user already joined
+				const ownGroupIds = new Set(own.lists.map(g => g.id));
+				const suggested = discover.filter(g => !ownGroupIds.has(g.id));
+				setSuggestedGroups(suggested);
 			} catch (error) {
 				// Error is already handled inside the hook
 			}
@@ -82,7 +95,7 @@ const HomeScreen = () => {
 				<View className="px-4 py-4">
 					<View className="flex-row items-center justify-between mb-4">
 						<Text className="text-lg font-bold text-heyhao-black">Your Groups</Text>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => navigation.navigate(HOME_SCREENS.ALL_GROUPS_SCREEN)}>
 							<Text className="text-heyhao-blue font-semibold text-sm">See All</Text>
 						</TouchableOpacity>
 					</View>
@@ -95,7 +108,10 @@ const HomeScreen = () => {
 							keyExtractor={(item) => item.id}
 							scrollEnabled={false}
 							renderItem={({ item }) => (
-								<TouchableOpacity className="bg-white border border-heyhao-border rounded-2xl p-3 mb-3 flex-row items-center active:bg-heyhao-grey">
+								<TouchableOpacity 
+									onPress={() => navigation.navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId: item.id })}
+									className="bg-white border border-heyhao-border rounded-2xl p-3 mb-3 flex-row items-center active:bg-heyhao-grey"
+								>
 									<View className="w-14 h-14 rounded-xl mr-3 bg-heyhao-grey/50">
 										<Image
 											source={{ uri: item.photo_url }}
@@ -122,15 +138,18 @@ const HomeScreen = () => {
 				<View className="px-4 py-4">
 					<Text className="text-lg font-bold text-heyhao-black mb-4">Suggested Groups</Text>
 
-					{isLoading && discoverGroups.length === 0 ? (
+					{isLoading && suggestedGroups.length === 0 ? (
 						<ActivityIndicator size="large" color="#165dff" className="my-8" />
-					) : discoverGroups.length > 0 ? (
+					) : suggestedGroups.length > 0 ? (
 						<FlatList
-							data={discoverGroups.slice(0, 3)}
+							data={suggestedGroups.slice(0, 3)}
 							keyExtractor={(item) => item.id}
 							scrollEnabled={false}
 							renderItem={({ item }) => (
-								<TouchableOpacity className="bg-heyhao-grey border border-heyhao-border rounded-2xl p-3 flex-row items-center mb-3">
+								<TouchableOpacity 
+									onPress={() => navigation.navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId: item.id })}
+									className="bg-heyhao-grey border border-heyhao-border rounded-2xl p-3 flex-row items-center mb-3"
+								>
 									<Image
 										source={{ uri: item.photo_url }}
 										className="w-12 h-12 rounded-full bg-white/50"

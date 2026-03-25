@@ -12,6 +12,7 @@ import {useNavigation} from "@react-navigation/native";
 
 import Avatar from "@components/Avatar";
 import AwareView from "@components/AwareView";
+import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const MOCK_MESSAGES = [
 	{
@@ -66,12 +67,8 @@ const ActiveChatScreen = () => {
 				{/* Header */}
 				<View className="px-4 pt-6 pb-4 border-b border-heyhao-border bg-white flex-row items-center justify-between">
 					<View className="flex-row items-center flex-1">
-						<TouchableOpacity 
-							onPress={() => navigation.goBack()}
-							className="bg-heyhao-grey w-10 h-10 rounded-full items-center justify-center mr-3">
-							<Icon name="arrow-back" size={20} color="#165dff" />
-						</TouchableOpacity>
-						<View className="flex-1">
+						<HeaderBackButton />
+						<View className="flex-1 ml-2">
 							<Text className="text-heyhao-black font-bold text-base">Arif Alfin</Text>
 							<Text className="text-heyhao-secondary text-xs">Active now</Text>
 						</View>

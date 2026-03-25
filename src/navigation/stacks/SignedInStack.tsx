@@ -1,7 +1,6 @@
 import React from "react";
 
 import ActiveChatScreen from "@features/chat/screens/ActiveChatScreen";
-import DetailGroupScreen from "@features/discover/screens/DetailGroupScreen";
 import SuccessPaymentScreen from "@features/payment/screens/SuccessPaymentScreen";
 import ProfileScreen from "@features/profile/screens/ProfileScreen";
 import PayoutScreen from "@features/revenue/screens/PayoutScreen";
@@ -49,7 +48,6 @@ const SignedInStack = () => {
 	return (
 		<Stack.Navigator screenOptions={NAVIGATION_OPTIONS}>
 			<Stack.Screen name={NAVIGATOR_DRAWER_STACK} component={DrawerStack} />
-			<Stack.Screen name={DISCOVER_SCREENS.DETAIL_GROUP} component={DetailGroupScreen} />
 			<Stack.Screen name={REVENUE_SCREENS.WITHDRAW} component={WithdrawScreen} />
 			<Stack.Screen name={REVENUE_SCREENS.PAYOUTS} component={PayoutScreen} />
 			<Stack.Screen name={SETTINGS_SCREENS.ACCOUNT} component={AccountSettingsScreen} />

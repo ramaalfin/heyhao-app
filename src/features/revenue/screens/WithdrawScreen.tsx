@@ -12,6 +12,7 @@ import {useNavigation} from "@react-navigation/native";
 import AwareView from "@components/AwareView";
 import Button from "@components/Button";
 import TextInput from "@components/TextInput";
+import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const WithdrawScreen = () => {
 	const navigation = useNavigation();
@@ -26,12 +27,8 @@ const WithdrawScreen = () => {
 				className="w-full h-full bg-white">
 				{/* Header */}
 				<View className="px-4 pt-4 pb-6 border-b border-heyhao-border flex-row items-center">
-					<TouchableOpacity 
-						onPress={() => navigation.goBack()}
-						className="bg-heyhao-grey w-10 h-10 rounded-full items-center justify-center mr-4">
-						<Icon name="arrow-back" size={20} color="#165dff" />
-					</TouchableOpacity>
-					<Text className="text-2xl font-black text-heyhao-black">Withdraw Funds</Text>
+					<HeaderBackButton />
+					<Text className="text-2xl font-black text-heyhao-black ml-2">Withdraw Funds</Text>
 				</View>
 
 				<View className="p-6">

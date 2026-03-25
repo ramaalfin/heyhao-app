@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import {useNavigation} from "@react-navigation/native";
 
 import AwareView from "@components/AwareView";
+import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const MOCK_PAYOUTS = [
 	{
@@ -48,12 +49,8 @@ const PayoutScreen = () => {
 		<AwareView backgroundColor="bg-white">
 			{/* Header */}
 			<View className="px-4 pt-4 pb-6 border-b border-heyhao-border flex-row items-center">
-				<TouchableOpacity 
-					onPress={() => navigation.goBack()}
-					className="bg-heyhao-grey w-10 h-10 rounded-full items-center justify-center mr-4">
-					<Icon name="arrow-back" size={20} color="#165dff" />
-				</TouchableOpacity>
-				<Text className="text-2xl font-black text-heyhao-black">Payout History</Text>
+				<HeaderBackButton />
+				<Text className="text-2xl font-black text-heyhao-black ml-2">Payout History</Text>
 			</View>
 
 			<FlatList

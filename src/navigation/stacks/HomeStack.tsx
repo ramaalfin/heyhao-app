@@ -6,6 +6,8 @@ import DiscoverScreen from "@features/discover/screens/DiscoverScreen";
 import HomeScreen from "@features/home/screens/HomeScreen";
 import RevenueScreen from "@features/revenue/screens/RevenueScreen";
 import SettingsScreen from "@features/settings/screens/SettingsScreen";
+import AllGroupsScreen from "@features/groups/screens/AllGroupsScreen";
+import GroupDetailScreen from "@features/groups/screens/GroupDetailScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 
@@ -46,6 +48,8 @@ export type HomeStackParams = {
 	[HOME_SCREENS.REVENUE_SCREEN]: undefined;
 	[HOME_SCREENS.SETTINGS_SCREEN]: undefined;
 	[HOME_SCREENS.PROFILE_SCREEN]: undefined;
+	[HOME_SCREENS.ALL_GROUPS_SCREEN]: undefined;
+	[HOME_SCREENS.GROUP_DETAIL_SCREEN]: { groupId: string };
 };
 
 const TabNavigator = () => {
@@ -108,6 +112,8 @@ const HomeStack = () => {
 	return (
 		<Stack.Navigator screenOptions={{headerShown: false}}>
 			<Stack.Screen name="TabNavigator" component={TabNavigator} />
+			<Stack.Screen name={HOME_SCREENS.ALL_GROUPS_SCREEN} component={AllGroupsScreen} />
+			<Stack.Screen name={HOME_SCREENS.GROUP_DETAIL_SCREEN} component={GroupDetailScreen} />
 		</Stack.Navigator>
 	);
 };
