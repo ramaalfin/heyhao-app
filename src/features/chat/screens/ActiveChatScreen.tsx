@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import {useNavigation} from "@react-navigation/native";
-
 import Avatar from "@components/Avatar";
 import AwareView from "@components/AwareView";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
@@ -58,7 +56,6 @@ const MOCK_MESSAGES = [
 ];
 
 const ActiveChatScreen = () => {
-	const navigation = useNavigation();
 	const [message, setMessage] = useState("");
 
 	return (

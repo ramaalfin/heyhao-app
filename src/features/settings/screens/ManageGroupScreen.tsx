@@ -7,8 +7,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import {useNavigation} from "@react-navigation/native";
-
 import AwareView from "@components/AwareView";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 
@@ -21,8 +19,6 @@ const ADMIN_ACTIONS = [
 ];
 
 const ManageGroupScreen = () => {
-	const navigation = useNavigation();
-
 	return (
 		<AwareView backgroundColor="bg-white">
 			<ScrollView

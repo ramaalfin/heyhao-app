@@ -9,7 +9,6 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import AwareView from "@components/AwareView";
-import Button from "@components/Button";
 import { useNavigation } from "@react-navigation/native";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 

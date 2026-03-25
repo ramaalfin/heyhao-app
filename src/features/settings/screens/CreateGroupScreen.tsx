@@ -7,15 +7,12 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import {useNavigation} from "@react-navigation/native";
-
 import AwareView from "@components/AwareView";
 import Button from "@components/Button";
 import TextInput from "@components/TextInput";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const CreateGroupScreen = () => {
-	const navigation = useNavigation();
 	const [name, setName] = useState("");
 	const [about, setAbout] = useState("");
 	const [category, setCategory] = useState("");

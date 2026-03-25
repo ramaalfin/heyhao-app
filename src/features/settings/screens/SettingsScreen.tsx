@@ -10,7 +10,6 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { useNavigation } from "@react-navigation/native";
 
-import Avatar from "@components/Avatar";
 import AwareView from "@components/AwareView";
 import { useAuth } from "@hooks/useAuth";
 

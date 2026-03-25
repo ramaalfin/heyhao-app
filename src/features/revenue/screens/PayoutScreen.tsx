@@ -2,13 +2,8 @@ import React from "react";
 import {
 	FlatList,
 	Text,
-	TouchableOpacity,
 	View,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
-
-import {useNavigation} from "@react-navigation/native";
-
 import AwareView from "@components/AwareView";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 
@@ -43,8 +38,6 @@ const MOCK_PAYOUTS = [
 ];
 
 const PayoutScreen = () => {
-	const navigation = useNavigation();
-
 	return (
 		<AwareView backgroundColor="bg-white">
 			{/* Header */}

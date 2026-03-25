@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import { useNavigation } from "@react-navigation/native";
-
 import Avatar from "@components/Avatar";
 import AwareView from "@components/AwareView";
 import Button from "@components/Button";
@@ -18,7 +16,6 @@ import { useAppDispatch, useAppSelector } from "@store/hooks";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const AccountSettingsScreen = () => {
-	const navigation = useNavigation();
 	const [profilePicture, setProfilePicture] = useState("");
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");

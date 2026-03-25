@@ -7,15 +7,12 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import {useNavigation} from "@react-navigation/native";
-
 import AwareView from "@components/AwareView";
 import Button from "@components/Button";
 import TextInput from "@components/TextInput";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 
 const WithdrawScreen = () => {
-	const navigation = useNavigation();
 	const [amount, setAmount] = useState("");
 	const [bank, setBank] = useState("");
 	const [accountNumber, setAccountNumber] = useState("");
