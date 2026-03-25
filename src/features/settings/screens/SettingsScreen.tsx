@@ -34,6 +34,9 @@ const SettingsScreen = () => {
 			case "REVENUE":
 				navigation.navigate("REVENUE_SCREEN" as never);
 				break;
+			case "GROUPS":
+				navigation.navigate("MY_GROUPS" as never);
+				break;
 			case "CREATE":
 				navigation.navigate("CREATE_GROUP" as never);
 				break;

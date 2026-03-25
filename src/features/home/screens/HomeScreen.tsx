@@ -96,7 +96,7 @@ const HomeScreen = () => {
 					<View className="flex-row items-center justify-between mb-4">
 						<Text className="text-lg font-bold text-heyhao-black">Your Groups</Text>
 						<TouchableOpacity onPress={() => navigation.navigate(HOME_SCREENS.ALL_GROUPS_SCREEN)}>
-							<Text className="text-heyhao-blue font-semibold text-sm">See All</Text>
+							<Text className="text-heyhao-blue font-semibold text-sm">See All Groups</Text>
 						</TouchableOpacity>
 					</View>
 
