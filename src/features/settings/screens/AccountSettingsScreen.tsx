@@ -28,7 +28,7 @@ const AccountSettingsScreen = () => {
 		if (user) {
 			setName(user.name);
 			setEmail(user.email);
-			setProfilePicture(user.photo);
+			setProfilePicture(user.photo_url || "");
 		}
 	}, [user]);
 
@@ -51,8 +51,12 @@ const AccountSettingsScreen = () => {
 					{/* Avatar Section */}
 					<View className="items-center mb-8">
 						<View className="relative mb-4">
-							{profilePicture ? (
-								<Image source={{ uri: profilePicture }} style={{ width: 100, height: 100, borderRadius: 50 }} />
+							{profilePicture && profilePicture.startsWith("http") ? (
+								<Image 
+									source={{ uri: profilePicture }} 
+									style={{ width: 100, height: 100, borderRadius: 50 }}
+									onError={() => setProfilePicture("")}
+								/>
 							) : (
 								<Avatar username={name.split(" ")[0].toUpperCase()} size={100} />
 							)}

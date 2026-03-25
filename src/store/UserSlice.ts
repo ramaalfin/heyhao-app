@@ -8,6 +8,7 @@ export interface User {
 	name: string;
 	email: string;
 	photo: string;
+	photo_url?: string; // Optional for backward compatibility
 }
 
 /**
