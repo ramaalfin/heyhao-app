@@ -1,0 +1,51 @@
+// prettier-ignore
+{
+	"extends": "@tsconfig/react-native/tsconfig.json", /* Recommended React Native TSConfig base */
+	"compilerOptions": {
+		 "resolveJsonModule": true,
+		"target": "es6",
+		"module": "commonjs",
+		"strict": true,
+		"jsx": "react",
+		"esModuleInterop": true, 
+		/* Visit https://aka.ms/tsconfig.json to read more about this file */
+		"baseUrl": ".",
+		"paths": {
+			"@api/*": [
+				"./src/api/*"
+			],
+			"@screens/*": [
+				"./src/screens/*"
+			],
+			"@components/*": [
+				"./src/components/*"
+			],
+			"@navigation/*": [
+				"./src/navigation/*"
+			],
+			"@assets/*": [
+				"./src/assets/*"
+			],
+			"@redux/*": [
+				"./src/redux/*"
+			],
+			"@hooks/*": [
+				"./src/hooks/*"
+			],
+			"@utils/*": [
+				"./src/utils/*"
+			],
+			"@features/*": [
+				"./src/features/*"
+			],
+			"@services/*": [
+				"./src/services/*"
+			],
+			"@store/*": [
+				"./src/store/*"
+			]
+		},
+		/* Completeness */
+		"skipLibCheck": true /* Skip type checking all .d.ts files. */
+	}
+}
