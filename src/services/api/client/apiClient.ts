@@ -8,6 +8,7 @@ import { cloneDeep, defaults, mapKeys } from "lodash";
 
 import AuthApi from "../auth/authApi";
 import GroupApi from "../group/groupApi";
+import TransactionApi from "../transaction/transactionApi";
 import { setupAuthInterceptors } from "../interceptors/authInterceptor";
 import { example } from "./example";
 
@@ -18,6 +19,7 @@ export class ApiClient {
 	public client: AxiosInstance;
 	public auth: AuthApi;
 	public group: GroupApi;
+	public transaction: TransactionApi;
 
 	// constructor for the API client
 	constructor(
@@ -34,6 +36,9 @@ export class ApiClient {
 
 		// Initialize group API
 		this.group = new GroupApi(this.client);
+
+		// Initialize transaction API
+		this.transaction = new TransactionApi(this.client);
 
 		if (authToken) {
 			this.setBearerToken(authToken);
