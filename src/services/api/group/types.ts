@@ -49,6 +49,13 @@ export interface OwnGroupResponse {
 	total_members: number;
 }
 
+export interface Person {
+	id: string;
+	name: string;
+	created_at: string;
+	photo_url: string;
+}
+
 export interface ApiResponse<T> {
 	success: boolean;
 	message: string;

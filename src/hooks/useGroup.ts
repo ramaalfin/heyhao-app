@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ApiClient } from "@services/api/client/apiClient";
-import type { Group, OwnGroupResponse } from "@services/api/group/types";
+import type { Group, OwnGroupResponse, Person } from "@services/api/group/types";
 import { parseApiError } from "@utils/errors/errorHandler";
 
 export const useGroup = () => {
@@ -42,6 +42,20 @@ export const useGroup = () => {
             setError(null);
             try {
                 const data = await apiClient.group.getOwnGroups();
+                return data;
+            } catch (err: any) {
+                const parsed = parseApiError(err);
+                setError(parsed.message);
+                throw err;
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        getPeoples: async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const data = await apiClient.group.getPeoples();
                 return data;
             } catch (err: any) {
                 const parsed = parseApiError(err);

@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import { logError, parseApiError } from "@utils/errors/errorHandler";
-import type { ApiResponse, Group, GroupDetail, OwnGroupResponse } from "./types";
+import type { ApiResponse, Group, GroupDetail, OwnGroupResponse, Person } from "./types";
 
 export class GroupApi {
 	private client: AxiosInstance;
@@ -48,6 +48,20 @@ export class GroupApi {
 			return response.data.data;
 		} catch (error) {
 			logError(error, { method: "getOwnGroups" });
+			throw parseApiError(error);
+		}
+	}
+
+	/**
+	 * Get all people/users
+	 * @returns Promise resolving to list of people
+	 */
+	async getPeoples(): Promise<Person[]> {
+		try {
+			const response = await this.client.get<ApiResponse<Person[]>>("/groups/peoples");
+			return response.data.data;
+		} catch (error) {
+			logError(error, { method: "getPeoples" });
 			throw parseApiError(error);
 		}
 	}
