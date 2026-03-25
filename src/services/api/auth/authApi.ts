@@ -79,9 +79,9 @@ export class AuthApi {
 			);
 
 			// Update Redux state
-			const { id, name, email, photo, token, refreshToken } = response.data.data;
+			const { id, name, email, photo, photo_url, token, refreshToken } = response.data.data;
 
-			store.dispatch(setUser({ id, name, email, photo }));
+			store.dispatch(setUser({ id, name, email, photo, photo_url }));
 			store.dispatch(setAuthToken(token));
 			store.dispatch(setRefreshToken(refreshToken));
 			store.dispatch(setLoading(false));
@@ -113,9 +113,9 @@ export class AuthApi {
 			);
 
 			// Update Redux state
-			const { id, name, email, photo, token, refreshToken } = response.data.data;
+			const { id, name, email, photo, photo_url, token, refreshToken } = response.data.data;
 
-			store.dispatch(setUser({ id, name, email, photo }));
+			store.dispatch(setUser({ id, name, email, photo, photo_url }));
 			store.dispatch(setAuthToken(token));
 			store.dispatch(setRefreshToken(refreshToken));
 			store.dispatch(setLoading(false));

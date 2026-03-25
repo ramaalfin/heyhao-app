@@ -36,6 +36,7 @@ export interface User {
     name: string;
     email: string;
     photo: string;
+    photo_url?: string; // Optional for backward compatibility
 }
 
 // ============================================================================
@@ -111,6 +112,7 @@ export interface AuthResponseData {
     name: string;
     email: string;
     photo: string;
+    photo_url?: string; // Optional for backward compatibility
     token: string;
     refreshToken: string;
 }
