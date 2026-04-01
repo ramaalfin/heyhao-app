@@ -1,6 +1,5 @@
-import React, {useEffect,useState} from "react";
+import React, { useState } from "react";
 import {
-	ActivityIndicator,
 	Alert,
 	Image,
 	ScrollView,
@@ -22,9 +21,9 @@ import TextInput from "@components/TextInput";
 import {useAuth} from "@hooks/useAuth";
 import {NavigationParams} from "@navigation/Navigation";
 import {SignedOutStackParams} from "@navigation/stacks/SignedOutStack";
-import {getFieldErrors, getUserErrorMessage} from "@utils/errors/errorHandler";
 import {SIGNED_OUT_SCREENS} from "@utils/screens";
 import {validateSignUpForm} from "@utils/validators/authValidators";
+import { ParsedApiError } from "@utils/errors/errorTypes";
 
 const SignUpScreen = () => {
 	const navigation =
@@ -32,7 +31,7 @@ const SignUpScreen = () => {
 			NativeStackNavigationProp<SignedOutStackParams & NavigationParams>
 		>();
 
-	const {signUp, isLoading, isAuthenticated, error: reduxError} = useAuth();
+	const { signUp, isLoading } = useAuth();
 
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -41,14 +40,6 @@ const SignUpScreen = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [apiError, setApiError] = useState<string | null>(null);
-
-	// Navigate to SignedInStack when authenticated
-	useEffect(() => {
-		if (isAuthenticated) {
-			// Navigation will be handled by the Navigation component
-			// which watches the isAuthenticated state
-		}
-	}, [isAuthenticated]);
 
 	const handleSignInNavigation = () => {
 		navigation.navigate(SIGNED_OUT_SCREENS.SIGN_IN_SCREEN);
@@ -115,7 +106,7 @@ const SignUpScreen = () => {
 			return;
 		}
 
-		// Submit sign-up request
+		// Kirim request ke backend
 		try {
 			await signUp({
 				name,
@@ -123,17 +114,17 @@ const SignUpScreen = () => {
 				password,
 				photo: photo!,
 			});
-
-			// Success - navigation will be handled by useEffect watching isAuthenticated
-		} catch (error) {
-			// Handle API errors
-			const fieldErrors = getFieldErrors(error);
-			if (fieldErrors) {
-				setErrors(fieldErrors);
+			// Navigasi ditangani otomatis oleh RootNavigator
+		} catch (err) {
+			const parsed = err as ParsedApiError;
+			// Tampilkan field error dari backend jika ada
+			if (parsed.fieldErrors) {
+				setErrors(parsed.fieldErrors as Record<string, string>);
 			}
-
-			const errorMessage = getUserErrorMessage(error);
-			setApiError(errorMessage);
+			// Tampilkan pesan error umum dari backend
+			if (parsed.message) {
+				setApiError(parsed.message);
+			}
 		}
 	};
 
@@ -287,12 +278,7 @@ const SignUpScreen = () => {
 						isDisabled={!name || !email || !password || !photo || isLoading}
 					/>
 
-					{/* Loading Indicator */}
-					{isLoading && (
-						<View className="items-center mt-4">
-							<ActivityIndicator size="small" color="#165dff" />
-						</View>
-					)}
+
 
 					{/* Sign In Link */}
 					<View className="items-center mt-8">

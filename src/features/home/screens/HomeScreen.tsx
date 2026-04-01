@@ -25,40 +25,46 @@ type NavigationProp = NativeStackNavigationProp<HomeStackParams>;
 const HomeScreen = () => {
 	const navigation = useNavigation<NavigationProp>();
 	const { user } = useAuth();
-	const { getOwnGroups, getGroups, isLoading } = useGroup();
+	const { getOwnGroups, getGroups, isLoading, error } = useGroup();
 
 	const [ownGroups, setOwnGroups] = useState<OwnGroupResponse | null>(null);
 	const [discoverGroups, setDiscoverGroups] = useState<Group[]>([]);
 	const [suggestedGroups, setSuggestedGroups] = useState<Group[]>([]);
 
 	useEffect(() => {
+		let isMounted = true;
+
 		const fetchData = async () => {
 			try {
 				const [own, discover] = await Promise.all([
 					getOwnGroups(),
 					getGroups(),
 				]);
+
+				if (!isMounted) return;
+
 				setOwnGroups(own);
 				setDiscoverGroups(discover);
 
-				// Filter suggested groups - exclude groups user already joined
+				// Filter group yang belum diikuti user
 				const ownGroupIds = new Set(own.lists.map(g => g.id));
-				const suggested = discover.filter(g => !ownGroupIds.has(g.id));
-				setSuggestedGroups(suggested);
-			} catch (error) {
-				// Error is already handled inside the hook
+				setSuggestedGroups(discover.filter(g => !ownGroupIds.has(g.id)));
+			} catch {
+				// Pesan error sudah disimpan di state `error` oleh useGroup
 			}
 		};
 
 		fetchData();
-	}, []);
+
+		return () => { isMounted = false; };
+	}, [getOwnGroups, getGroups]);
 
 	return (
 		<AwareView backgroundColor="bg-white">
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				className="w-full h-full bg-white">
-				{/* Header with safe area padding */}
+				{/* Header */}
 				<View className="px-4 pt-6 pb-6 flex-row items-center justify-between border-b border-heyhao-border">
 					<View className="flex-row items-center">
 						<Avatar username={user?.name || "User"} size={40} />
@@ -71,6 +77,14 @@ const HomeScreen = () => {
 						<Icon name="notifications-none" size={24} color="#165dff" />
 					</TouchableOpacity>
 				</View>
+
+				{/* Tampilkan error dari backend jika ada */}
+				{error && (
+					<View className="mx-4 mt-4 bg-red-50 border border-red-200 rounded-2xl p-4 flex-row items-start">
+						<Icon name="error-outline" size={20} color="#ef4444" />
+						<Text className="text-red-600 text-sm ml-2 flex-1">{error}</Text>
+					</View>
+				)}
 
 				{/* Quick Stats */}
 				<View className="px-4 py-6 flex-row justify-between">

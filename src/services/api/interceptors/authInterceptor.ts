@@ -74,9 +74,12 @@ export const setupAuthInterceptors = (axiosInstance: AxiosInstance): void => {
 		async (error: AxiosError) => {
 			const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+			// Jangan lakukan intercept jika route adalah auth (sign-in, sign-up, dll) yang memang me-return 401 jika gagal
+			const isAuthRoute = originalRequest.url?.includes("/auth/") ?? false;
+
 			// CRITICAL: Check if error is 401 and request hasn't been retried yet
 			// The _retry flag prevents infinite loops if refresh also returns 401
-			if (error.response?.status === 401 && !originalRequest._retry) {
+			if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
 				// CASE 1: Token refresh already in progress
 				// Queue this request and wait for refresh to complete
 				if (tokenManager.isRefreshingToken()) {

@@ -40,33 +40,19 @@ export const parseApiError = (error: unknown): ParsedApiError => {
 
 	// Handle network errors (no response)
 	if (!hasResponse || !(error as any).response) {
+		const rawMessage = error instanceof Error ? error.message : "Unknown error";
+
 		// Check for timeout errors
 		if ((error as any).code === "ECONNABORTED" || (error as any).code === "ETIMEDOUT") {
 			return {
 				type: ErrorType.NETWORK_ERROR,
-				message: "Request timeout. Please try again.",
-			};
-		}
-
-		// Check for network error message
-		if ((error as any).message === "Network Error") {
-			return {
-				type: ErrorType.NETWORK_ERROR,
-				message: "Network error. Please check your connection.",
-			};
-		}
-
-		// Default network error for errors without response
-		if (error instanceof Error) {
-			return {
-				type: ErrorType.NETWORK_ERROR,
-				message: "Network error. Please check your connection.",
+				message: `Time out (koneksi lambat). Error: ${rawMessage}`,
 			};
 		}
 
 		return {
-			type: ErrorType.UNKNOWN_ERROR,
-			message: "An unexpected error occurred",
+			type: ErrorType.NETWORK_ERROR,
+			message: `Gagal terhubung ke server (Network Error). Detail: ${rawMessage}`,
 		};
 	}
 
@@ -196,7 +182,7 @@ export const sanitizeErrorMessage = (message: string): string => {
  */
 export const logError = (error: unknown, context?: Record<string, any>): void => {
 	if (__DEV__) {
-		console.error("API Error:", {
+		console.warn("API Error:", {
 			error,
 			context,
 			timestamp: new Date().toISOString(),

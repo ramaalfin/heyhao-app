@@ -57,7 +57,7 @@ const ChatScreen = () => {
 	const [search, setSearch] = useState("");
 
 	const handleChatPress = (chatId: string) => {
-		navigation.navigate("ACTIVE_CHAT" as never, {chatId} as never);
+		(navigation.navigate as any)("ACTIVE_CHAT", {chatId});
 	};
 
 	return (

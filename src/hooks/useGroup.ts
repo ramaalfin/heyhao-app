@@ -1,77 +1,87 @@
-import { useMemo, useState } from "react";
-import { ApiClient } from "@services/api/client/apiClient";
-import type { Group, OwnGroupResponse, Person } from "@services/api/group/types";
+/**
+ * useGroup Hook
+ *
+ * Hook untuk semua operasi yang berhubungan dengan Group.
+ * - Menggunakan singleton apiClient (tidak buat instance baru setiap render)
+ * - Mengelola state loading/error secara lokal
+ */
+
+import { useState, useCallback } from "react";
+import apiClient from "@services/api/client/apiClient";
 import { parseApiError } from "@utils/errors/errorHandler";
 
 export const useGroup = () => {
-    const apiClient = useMemo(() => new ApiClient(), []);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const groupMethods = useMemo(() => ({
-        getGroups: async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await apiClient.group.getGroups();
-                return data;
-            } catch (err: any) {
-                const parsed = parseApiError(err);
-                setError(parsed.message);
-                throw err;
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        getGroupById: async (id: string) => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await apiClient.group.getGroupById(id);
-                return data;
-            } catch (err: any) {
-                const parsed = parseApiError(err);
-                setError(parsed.message);
-                throw err;
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        getOwnGroups: async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await apiClient.group.getOwnGroups();
-                return data;
-            } catch (err: any) {
-                const parsed = parseApiError(err);
-                setError(parsed.message);
-                throw err;
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        getPeoples: async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await apiClient.group.getPeoples();
-                return data;
-            } catch (err: any) {
-                const parsed = parseApiError(err);
-                setError(parsed.message);
-                throw err;
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    }), [apiClient]);
+  // Ambil semua group yang bisa di-discover
+  const getGroups = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await apiClient.group.getGroups();
+    } catch (err) {
+      const parsed = parseApiError(err);
+      setError(parsed.message);
+      throw parsed;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-    return {
-        ...groupMethods,
-        isLoading,
-        error
-    };
+  // Ambil detail satu group berdasarkan ID
+  const getGroupById = useCallback(async (id: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await apiClient.group.getGroupById(id);
+    } catch (err) {
+      const parsed = parseApiError(err);
+      setError(parsed.message);
+      throw parsed;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Ambil group milik / yang diikuti user saat ini
+  const getOwnGroups = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await apiClient.group.getOwnGroups();
+    } catch (err) {
+      const parsed = parseApiError(err);
+      setError(parsed.message);
+      throw parsed;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Ambil daftar semua pengguna (people)
+  const getPeoples = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await apiClient.group.getPeoples();
+    } catch (err) {
+      const parsed = parseApiError(err);
+      setError(parsed.message);
+      throw parsed;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return {
+    getGroups,
+    getGroupById,
+    getOwnGroups,
+    getPeoples,
+    isLoading,
+    error,
+  };
 };
 
 export default useGroup;

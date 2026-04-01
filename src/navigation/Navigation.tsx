@@ -10,12 +10,10 @@ import {selectIsAuthenticated} from "@store/UserSlice";
 
 import {
 	NAVIGATOR_LANDING,
-	NAVIGATOR_MODAL_STACK,
 	NAVIGATOR_SIGNED_IN_STACK,
 	NAVIGATOR_SIGNED_OUT_STACK,
 } from "@utils/screens";
 
-import ModalStack from "./stacks/ModalStack";
 import SignedInStack from "./stacks/SignedInStack";
 import SignedOutStack from "./stacks/SignedOutStack";
 
@@ -25,19 +23,12 @@ const NAVIGATION_OPTIONS = {
 	headerShown: false,
 };
 
-const MODAL_OPTIONS = {
-	presentation: "fullScreenModal" as const,
-	headerShown: false,
-};
+
 
 export type NavigationParams = {
 	[NAVIGATOR_LANDING]: undefined;
 	[NAVIGATOR_SIGNED_IN_STACK]: undefined;
 	[NAVIGATOR_SIGNED_OUT_STACK]: undefined;
-	[NAVIGATOR_MODAL_STACK]: {
-		screen: string;
-		params: unknown;
-	};
 };
 
 const Navigation = () => {
@@ -88,11 +79,6 @@ const Navigation = () => {
 						/>
 					</>
 				)}
-				<Stack.Screen
-					name={NAVIGATOR_MODAL_STACK}
-					component={ModalStack}
-					options={MODAL_OPTIONS}
-				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

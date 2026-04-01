@@ -40,7 +40,7 @@ class SessionManager {
 			// Tokens exist and isAuthenticated flag is set
 			return isAuthenticated;
 		} catch (error) {
-			console.error("Error checking auth status:", error);
+			console.warn("Error checking auth status:", error);
 			return false;
 		}
 	}
