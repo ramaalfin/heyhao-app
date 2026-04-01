@@ -28,7 +28,7 @@ const AllGroupsScreen = () => {
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [suggestedGroups, setSuggestedGroups] = useState<Group[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<"all" | "suggested">("all");
+  const [activeFilter, setActiveFilter] = useState<"ALL" | "FREE" | "PAID">("ALL");
 
   const fetchData = useCallback(async () => {
     try {
@@ -59,10 +59,13 @@ const AllGroupsScreen = () => {
   };
 
   const handleGroupPress = (groupId: string) => {
-    navigation.navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId });
+    (navigation as any).navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId });
   };
 
-  const displayGroups = activeTab === "all" ? allGroups : suggestedGroups;
+  const filteredGroups = allGroups.filter((g) => {
+    if (activeFilter === "ALL") return true;
+    return g.type === activeFilter;
+  });
 
   const renderGroupItem = ({ item }: { item: Group }) => (
     <TouchableOpacity
@@ -112,25 +115,29 @@ const AllGroupsScreen = () => {
               <HeaderBackButton />
               <Text className="text-2xl font-black text-heyhao-black ml-2">Grup</Text>
             </View>
-            <TouchableOpacity className="bg-heyhao-blue rounded-full p-2">
-              <Icon name="add" size={24} color="white" />
-            </TouchableOpacity>
           </View>
 
-          {/* Tab Selector */}
-          <View className="flex-row bg-heyhao-grey rounded-xl p-1">
+          {/* Filter Tabs */}
+          <View className="flex-row bg-heyhao-grey rounded-2xl p-1">
             <TouchableOpacity
-              onPress={() => setActiveTab("all")}
-              className={`flex-1 py-2 rounded-lg ${activeTab === "all" ? "bg-white" : ""}`}>
-              <Text className={`text-center font-semibold text-sm ${activeTab === "all" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>
-                Semua ({allGroups.length})
+              onPress={() => setActiveFilter("ALL")}
+              className={`flex-1 py-2.5 rounded-xl items-center ${activeFilter === "ALL" ? "bg-white shadow-sm" : ""}`}>
+              <Text className={`text-xs font-bold ${activeFilter === "ALL" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>
+                Semua
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setActiveTab("suggested")}
-              className={`flex-1 py-2 rounded-lg ${activeTab === "suggested" ? "bg-white" : ""}`}>
-              <Text className={`text-center font-semibold text-sm ${activeTab === "suggested" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>
-                Saran ({suggestedGroups.length})
+              onPress={() => setActiveFilter("FREE")}
+              className={`flex-1 py-2.5 rounded-xl items-center ${activeFilter === "FREE" ? "bg-white shadow-sm" : ""}`}>
+              <Text className={`text-xs font-bold ${activeFilter === "FREE" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>
+                Gratis
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveFilter("PAID")}
+              className={`flex-1 py-2.5 rounded-xl items-center ${activeFilter === "PAID" ? "bg-white shadow-sm" : ""}`}>
+              <Text className={`text-xs font-bold ${activeFilter === "PAID" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>
+                VIP
               </Text>
             </TouchableOpacity>
           </View>
@@ -145,13 +152,13 @@ const AllGroupsScreen = () => {
         )}
 
         {/* Daftar Grup */}
-        {isLoading && displayGroups.length === 0 ? (
+        {isLoading && filteredGroups.length === 0 ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#165dff" />
           </View>
-        ) : displayGroups.length > 0 ? (
+        ) : filteredGroups.length > 0 ? (
           <FlatList
-            data={displayGroups}
+            data={filteredGroups}
             keyExtractor={(item) => item.id}
             renderItem={renderGroupItem}
             contentContainerStyle={{ padding: 16 }}
@@ -164,12 +171,10 @@ const AllGroupsScreen = () => {
           <View className="flex-1 items-center justify-center px-4">
             <Icon name="groups" size={64} color="#d1d5db" />
             <Text className="text-heyhao-black font-bold text-lg mt-4">
-              {activeTab === "all" ? "Belum Ada Grup" : "Tidak Ada Saran"}
+              {activeFilter === "ALL" ? "Belum Ada Grup" : activeFilter === "FREE" ? "Grup Gratis Kosong" : "Grup VIP Kosong"}
             </Text>
             <Text className="text-heyhao-secondary text-center mt-2">
-              {activeTab === "all"
-                ? "Belum ada grup yang tersedia saat ini"
-                : "Semua grup yang tersedia sudah kamu ikuti"}
+              Belum ada grup yang tersedia saat ini
             </Text>
           </View>
         )}

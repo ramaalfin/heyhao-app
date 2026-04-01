@@ -15,7 +15,8 @@ import AwareView from "@components/AwareView";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 import useGroup from "@hooks/useGroup";
 import useAuth from "@hooks/useAuth";
-import { HOME_SCREENS, SETTINGS_SCREENS } from "@utils/screens";
+import useTransaction from "@hooks/useTransaction";
+import { HOME_SCREENS, SETTINGS_SCREENS, PAYMENT_SCREENS } from "@utils/screens";
 import type { GroupDetail } from "@services/api/group/types";
 
 const GroupDetailScreen = () => {
@@ -23,9 +24,11 @@ const GroupDetailScreen = () => {
   const route = useRoute();
   const { groupId } = route.params as { groupId: string };
   const { user } = useAuth();
-  const { getGroupById, joinGroup, deleteAsset, isLoading, error } = useGroup();
+  const { getGroupById, joinGroup, deleteAsset, isLoading: isLoadingGroup, error } = useGroup();
+  const { createTransaction, isLoading: isLoadingTransaction } = useTransaction();
 
   const [group, setGroup] = useState<GroupDetail | null>(null);
+  const [isJoining, setIsJoining] = useState(false);
   const isOwner = group?.room.created_by === user?.id;
 
   const handleManage = () => {
@@ -49,12 +52,27 @@ const GroupDetailScreen = () => {
 
   const handleJoinGroup = async () => {
     try {
-      await joinGroup(groupId);
-      // Refresh data setalah bergabung
-      const data = await getGroupById(groupId);
-      setGroup(data);
-    } catch {
-      // Error sudah ditangani hook useGroup
+      setIsJoining(true);
+      if (group?.type === "PAID") {
+        const response = await createTransaction(groupId);
+        setIsJoining(false);
+        if (response?.redirect_url) {
+          (navigation as any).navigate(PAYMENT_SCREENS.WEBVIEW, { 
+            paymentUrl: response.redirect_url,
+            orderId: response.order_id,
+            amount: group.price
+          });
+        }
+      } else {
+        await joinGroup(groupId);
+        // Refresh data setelah bergabung
+        const data = await getGroupById(groupId);
+        setGroup(data);
+        setIsJoining(false);
+      }
+    } catch (err: any) {
+      setIsJoining(false);
+      Alert.alert("Gagal", err?.message || "Terjadi kesalahan saat memulai pembayaran, mohon coba lagi.");
     }
   };
 
@@ -83,7 +101,7 @@ const GroupDetailScreen = () => {
   };
 
   // Loading state
-  if (isLoading && !group) {
+  if ((isLoadingGroup && !group) || isLoadingTransaction) {
     return (
       <AwareView backgroundColor="bg-white">
         <View className="flex-1 items-center justify-center">
@@ -251,12 +269,17 @@ const GroupDetailScreen = () => {
           ) : (
             <TouchableOpacity
               onPress={handleJoinGroup}
-              className="bg-heyhao-blue rounded-2xl py-4 items-center active:bg-heyhao-blue/90">
-              <Text className="text-white font-bold text-base">
-                {group.type === "PAID"
-                  ? `Bergabung — Rp ${group.price.toLocaleString("id-ID")}`
-                  : "Bergabung Sekarang"}
-              </Text>
+              disabled={isJoining}
+              className={`rounded-2xl py-4 items-center flex-row justify-center ${isJoining ? 'bg-heyhao-blue/70' : 'bg-heyhao-blue active:bg-heyhao-blue/90'}`}>
+              {isJoining ? (
+                 <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Text className="text-white font-bold text-base">
+                  {group.type === "PAID"
+                    ? `Bergabung — Rp ${group.price.toLocaleString("id-ID")}`
+                    : "Bergabung Sekarang"}
+                </Text>
+              )}
             </TouchableOpacity>
           )}
         </View>

@@ -7,9 +7,19 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import AwareView from "@components/AwareView";
-import Button from "@components/Button";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const SuccessPaymentScreen = () => {
+	const navigation = useNavigation();
+	const route = useRoute();
+	const { orderId, amount, date } = route.params as { orderId: string; amount: number; date: string };
+
+	const formattedDate = new Date(date).toLocaleDateString("id-ID", {
+		day: "numeric",
+		month: "long",
+		year: "numeric"
+	});
+
 	return (
 		<AwareView backgroundColor="bg-white">
 			<View className="flex-1 w-full px-6 py-12 justify-center items-center bg-white">
@@ -30,29 +40,26 @@ const SuccessPaymentScreen = () => {
 				<View className="w-full bg-heyhao-grey rounded-2xl p-6 mb-8 border border-heyhao-border">
 					<View className="flex-row justify-between items-center mb-4 pb-4 border-b border-heyhao-border">
 						<Text className="text-heyhao-secondary text-xs font-bold uppercase tracking-widest">Transaction ID</Text>
-						<Text className="text-heyhao-black font-bold text-sm">#TX2023-001</Text>
+						<Text className="text-heyhao-black font-bold text-sm">#{orderId?.substring(0, 8).toUpperCase()}</Text>
 					</View>
 					<View className="flex-row justify-between items-center mb-4 pb-4 border-b border-heyhao-border">
 						<Text className="text-heyhao-secondary text-xs font-bold uppercase tracking-widest">Amount</Text>
-						<Text className="text-heyhao-black font-black text-lg">Rp 500,000</Text>
+						<Text className="text-heyhao-black font-black text-lg">Rp {amount?.toLocaleString("id-ID")}</Text>
 					</View>
 					<View className="flex-row justify-between items-center">
 						<Text className="text-heyhao-secondary text-xs font-bold uppercase tracking-widest">Date</Text>
-						<Text className="text-heyhao-black font-bold text-sm">24 June 2023</Text>
+						<Text className="text-heyhao-black font-bold text-sm">{formattedDate}</Text>
 					</View>
 				</View>
 
 				{/* Action Buttons */}
 				<View className="w-full gap-3">
-					<Button
-						onPress={() => {}}
-						label="Back to Dashboard"
-						buttonBackground="bg-heyhao-blue"
-						borderRadius="rounded-2xl"
-						buttonHeight="h-12"
-					/>
-					<TouchableOpacity className="bg-heyhao-grey rounded-2xl py-3 items-center justify-center border border-heyhao-border active:bg-heyhao-grey/80">
-						<Text className="text-heyhao-blue font-bold text-sm">Download Receipt</Text>
+					<TouchableOpacity
+						onPress={() => {
+							navigation.goBack();
+						}}
+						className="bg-heyhao-blue rounded-2xl py-3 items-center justify-center border border-heyhao-border active:bg-heyhao-grey/80">
+						<Text className="text-white font-bold text-sm">Close</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

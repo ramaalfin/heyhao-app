@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import { logError, parseApiError } from "@utils/errors/errorHandler";
-import type { ApiResponse, RevenueData, Payout } from "./types";
+import type { ApiResponse, RevenueData, Payout, CreateTransactionResponse } from "./types";
 
 export class TransactionApi {
     private client: AxiosInstance;
@@ -33,6 +33,21 @@ export class TransactionApi {
             return response.data.data;
         } catch (error) {
             logError(error, { method: "getPayouts" });
+            throw parseApiError(error);
+        }
+    }
+
+    /**
+     * Create a new transaction to join a paid group
+     * @param group_id ID of the group to join
+     * @returns Promise resolving to midtrans response (token, redirect_url)
+     */
+    async createTransaction(group_id: string): Promise<CreateTransactionResponse> {
+        try {
+            const response = await this.client.post<ApiResponse<CreateTransactionResponse>>("/transactions", { group_id });
+            return response.data.data;
+        } catch (error) {
+            logError(error, { method: "createTransaction" });
             throw parseApiError(error);
         }
     }

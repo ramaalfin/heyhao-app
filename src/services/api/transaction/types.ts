@@ -43,6 +43,12 @@ export interface Payout {
     created_at: string;
 }
 
+export interface CreateTransactionResponse {
+    token: string;
+    redirect_url: string;
+    order_id: string;
+}
+
 export interface ApiResponse<T> {
     success: boolean;
     message: string;

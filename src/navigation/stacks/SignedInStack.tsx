@@ -1,6 +1,7 @@
 import React from "react";
 
 import ActiveChatScreen from "@features/chat/screens/ActiveChatScreen";
+import PaymentWebviewScreen from "@features/payment/screens/PaymentWebviewScreen";
 import SuccessPaymentScreen from "@features/payment/screens/SuccessPaymentScreen";
 import ProfileScreen from "@features/profile/screens/ProfileScreen";
 import PayoutScreen from "@features/revenue/screens/PayoutScreen";
@@ -36,7 +37,8 @@ export type SignedInStackParams = {
 	[SETTINGS_SCREENS.ACCOUNT]: undefined;
 	[SETTINGS_SCREENS.MY_GROUPS]: undefined;
 	[SETTINGS_SCREENS.MANAGE_GROUP]: { groupId?: string; initialData?: any } | undefined;
-	[PAYMENT_SCREENS.SUCCESS]: { amount: string; txId: string };
+	[PAYMENT_SCREENS.SUCCESS]: { orderId: string; amount: number; date: string };
+	[PAYMENT_SCREENS.WEBVIEW]: { paymentUrl: string; orderId: string; amount: number };
 	PROFILE_SCREEN: undefined;
 	REVENUE_SCREEN: undefined;
 	ACCOUNT_SETTINGS: undefined;
@@ -55,6 +57,7 @@ const SignedInStack = () => {
 			<Stack.Screen name={SETTINGS_SCREENS.MY_GROUPS} component={MyGroupsScreen} />
 			<Stack.Screen name={SETTINGS_SCREENS.MANAGE_GROUP} component={ManageGroupScreen} />
 			<Stack.Screen name={PAYMENT_SCREENS.SUCCESS} component={SuccessPaymentScreen} />
+			<Stack.Screen name={PAYMENT_SCREENS.WEBVIEW} component={PaymentWebviewScreen} />
 			<Stack.Screen name="PROFILE_SCREEN" component={ProfileScreen} />
 			<Stack.Screen name="REVENUE_SCREEN" component={RevenueScreen} />
 			<Stack.Screen name="ACCOUNT_SETTINGS" component={AccountSettingsScreen} />

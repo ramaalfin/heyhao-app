@@ -43,9 +43,25 @@ export const useTransaction = () => {
     }
   }, []);
 
+  // Membuat transaksi join grup berbayar
+  const createTransaction = useCallback(async (group_id: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await apiClient.transaction.createTransaction(group_id);
+    } catch (err) {
+      const parsed = parseApiError(err);
+      setError(parsed.message);
+      throw parsed;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     getRevenue,
     getPayouts,
+    createTransaction,
     isLoading,
     error,
   };

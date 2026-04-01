@@ -34,6 +34,7 @@ export const SETTINGS_SCREENS = {
 
 export const PAYMENT_SCREENS = {
 	SUCCESS: "Success Payment",
+	WEBVIEW: "Payment Webview",
 } as const;
 
 export const AUTH_SCREENS = {
