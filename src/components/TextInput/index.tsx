@@ -1,8 +1,8 @@
-import React, {useState} from "react";
-import {Text, TextInput as RNInput, TouchableOpacity, View} from "react-native";
+import React, { useState } from "react";
+import { Text, TextInput as RNInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import {TextInputProps} from "./types";
+import { TextInputProps } from "./types";
 
 const TextInput: React.FC<TextInputProps> = ({
 	backgroundColor = "bg-white",

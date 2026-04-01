@@ -40,7 +40,6 @@ const SignInScreen = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   const handleGoToSignUp = () => {
@@ -66,7 +65,7 @@ const SignInScreen = () => {
       console.log("Success response:", response);
     } catch (err: any) {
       console.log("Raw Error Object:", err);
-      
+
       const parsed = err as ParsedApiError;
       console.log("Parsed Error:", parsed);
 
@@ -130,17 +129,10 @@ const SignInScreen = () => {
                   placeholder="••••••••"
                   backgroundColor="bg-transparent"
                   borderLess={true}
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   inputStyle="flex-1"
                   editable={!isLoading}
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Icon
-                    name={showPassword ? "visibility" : "visibility-off"}
-                    size={20}
-                    color="#6a7686"
-                  />
-                </TouchableOpacity>
               </View>
               {formErrors.password && (
                 <Text className="text-red-500 text-xs mt-1 ml-1">{formErrors.password}</Text>
