@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   Text,
@@ -8,40 +9,77 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 
 import AwareView from "@components/AwareView";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
 import useGroup from "@hooks/useGroup";
+import useAuth from "@hooks/useAuth";
+import { HOME_SCREENS, SETTINGS_SCREENS } from "@utils/screens";
 import type { GroupDetail } from "@services/api/group/types";
 
 const GroupDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { groupId } = route.params as { groupId: string };
-  const { getGroupById, isLoading, error } = useGroup();
+  const { user } = useAuth();
+  const { getGroupById, joinGroup, deleteAsset, isLoading, error } = useGroup();
 
   const [group, setGroup] = useState<GroupDetail | null>(null);
+  const isOwner = group?.room.created_by === user?.id;
 
-  useEffect(() => {
-    let isMounted = true;
+  const handleManage = () => {
+    (navigation as any).navigate(SETTINGS_SCREENS.MANAGE_GROUP, { groupId });
+  };
 
-    const fetch = async () => {
-      try {
-        const data = await getGroupById(groupId);
-        if (isMounted) setGroup(data);
-      } catch {
-        // Pesan error ditampilkan via state `error` dari useGroup
-      }
-    };
+  const fetch = async () => {
+    try {
+      const data = await getGroupById(groupId);
+      setGroup(data);
+    } catch {
+      // Pesan error ditampilkan via state `error` dari useGroup
+    }
+  };
 
-    fetch();
-    return () => { isMounted = false; };
-  }, [groupId, getGroupById]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetch();
+    }, [groupId])
+  );
 
-  const handleJoinGroup = () => {
-    // TODO: Implementasi join group
-    console.log("Join group:", groupId);
+  const handleJoinGroup = async () => {
+    try {
+      await joinGroup(groupId);
+      // Refresh data setalah bergabung
+      const data = await getGroupById(groupId);
+      setGroup(data);
+    } catch {
+      // Error sudah ditangani hook useGroup
+    }
+  };
+
+  const handleDeleteAsset = (assetId: string, assetName: string) => {
+    Alert.alert(
+      "Hapus Aset",
+      `Apakah Anda yakin ingin menghapus aset "${assetName}"?`,
+      [
+        { text: "Batal", style: "cancel" },
+        {
+          text: "Hapus",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteAsset(assetId);
+              // Refresh data
+              const data = await getGroupById(groupId);
+              setGroup(data);
+            } catch {
+              // Error ditangani hook
+            }
+          }
+        }
+      ]
+    );
   };
 
   // Loading state
@@ -86,7 +124,12 @@ const GroupDetailScreen = () => {
           </View>
 
           {/* Badge tipe grup */}
-          <View className="absolute top-12 right-4">
+          <View className="absolute top-12 right-4 flex-row items-center">
+            {isOwner && (
+              <TouchableOpacity onPress={handleManage} className="bg-white/90 p-2 rounded-full mr-2">
+                <Icon name="settings" size={20} color="#165dff" />
+              </TouchableOpacity>
+            )}
             <View className={`px-3 py-1.5 rounded-full ${group.type === "PAID" ? "bg-heyhao-orange" : "bg-heyhao-green"}`}>
               <Text className="text-white text-xs font-bold">{group.type}</Text>
             </View>
@@ -142,6 +185,31 @@ const GroupDetailScreen = () => {
                   </View>
                   <Icon name="payments" size={32} color="#165dff" />
                 </View>
+              </View>
+            )}
+
+            {/* Aset Grup (Khusus untuk anggota atau pemilik) */}
+            {(group.is_join || isOwner) && group.assets && group.assets.length > 0 && (
+              <View className="mb-6">
+                <Text className="text-lg font-bold text-heyhao-black mb-3">Aset Digital</Text>
+                {group.assets.map((asset, index) => (
+                  <View key={index} className="bg-heyhao-grey rounded-xl p-3 mb-2 flex-row items-center">
+                    <Icon name="insert-drive-file" size={20} color="#165dff" />
+                    <Text className="flex-1 text-heyhao-black text-sm ml-3" numberOfLines={1}>
+                      {asset.name || `Aset ${index + 1}`}
+                    </Text>
+                    {isOwner && (
+                      <TouchableOpacity onPress={() => handleDeleteAsset(asset.id, asset.name)}>
+                        <Icon name="delete" size={20} color="#ef4444" />
+                      </TouchableOpacity>
+                    )}
+                    {!isOwner && (
+                       <TouchableOpacity>
+                        <Icon name="file-download" size={20} color="#6a7686" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))}
               </View>
             )}
 

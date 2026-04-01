@@ -140,6 +140,52 @@ class PhotoUploader {
 	}
 
 	/**
+     * Prepares FormData for group creation/update
+     * @param photo - Photo asset
+     * @param groupData - Group metadata
+     * @param assets - Optional extra assets for paid groups
+     * @returns FormData ready for upload
+     */
+	prepareGroupFormData(photo?: Asset, groupData?: Record<string, any>, assets?: Asset[]): FormData {
+		const formData = new FormData();
+
+		// Append metadata
+		if (groupData) {
+			Object.keys(groupData).forEach(key => {
+				if (Array.isArray(groupData[key])) {
+					groupData[key].forEach((item: string) => {
+						formData.append(`${key}[]`, item);
+					});
+				} else {
+					formData.append(key, groupData[key]);
+				}
+			});
+		}
+
+		// Append photo
+		if (photo) {
+			formData.append("photo", {
+				uri: photo.uri,
+				type: photo.type || "image/jpeg",
+				name: photo.fileName || `photo_${Date.now()}.jpg`,
+			} as any);
+		}
+
+		// Append multiple assets if provided
+		if (assets && assets.length > 0) {
+			assets.forEach((asset, index) => {
+				formData.append("assets", {
+					uri: asset.uri,
+					type: asset.type || "application/octet-stream",
+					name: asset.fileName || `asset_${index}_${Date.now()}`,
+				} as any);
+			});
+		}
+
+		return formData;
+	}
+
+	/**
      * Prepares FormData for sign-up request with photo
      * @param photo - Photo asset
      * @param userData - User registration data

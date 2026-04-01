@@ -125,8 +125,7 @@ Root Navigation (Navigation.tsx)
 │       ├── Withdraw Screen
 │       ├── Payouts Screen
 │       ├── Account Settings Screen
-│       ├── Create Group Screen
-│       ├── Manage Group Screen
+│       ├── Manage/Create Group Screen
 │       ├── Success Payment Screen
 │       ├── Active Chat Screen
 │       └── Permission Screens
@@ -149,7 +148,7 @@ Root Navigation (Navigation.tsx)
 - **Header**: Back button on Sign Up and Forgot Password
 
 #### `SignedInStack.tsx`
-- **Screens**: Home Stack (drawer), Detail Group, Withdraw, Payouts, Account Settings, Create Group, Manage Group, Success Payment, Profile, Revenue, Active Chat
+- **Screens**: Home Stack (drawer), Detail Group, Withdraw, Payouts, Account Settings, Manage Group (Create/Edit), Success Payment, Profile, Revenue, Active Chat
 - **Type**: Native Stack Navigator
 - **Parameters**: Passes IDs for detail screens (e.g., `{id: string}` for Detail Group)
 
@@ -186,7 +185,7 @@ HOME_SCREENS = {
 
 DISCOVER_SCREENS = { DETAIL_GROUP }
 REVENUE_SCREENS = { WITHDRAW, PAYOUTS }
-SETTINGS_SCREENS = { ACCOUNT, MY_GROUPS, MANAGE_GROUP, EDIT_GROUP, CREATE_GROUP }
+SETTINGS_SCREENS = { ACCOUNT, MY_GROUPS, MANAGE_GROUP }
 PAYMENT_SCREENS = { SUCCESS }
 SIGNED_OUT_SCREENS = { SIGN_IN_SCREEN, SIGN_UP_SCREEN, FORGOT_PASSWORD_SCREEN }
 MODAL_SCREENS = { PERMISSION_SCREEN, PERMISSION_DENIED_SCREEN }
@@ -242,8 +241,7 @@ features/[feature-name]/
 #### **settings/** - App Settings
 - `SettingsScreen.tsx` - Settings overview
 - `AccountSettingsScreen.tsx` - Account configuration
-- `CreateGroupScreen.tsx` - Create new group
-- `ManageGroupScreen.tsx` - Edit/manage group
+- `ManageGroupScreen.tsx` - Combined screen for creating and updating groups
 
 ---
 

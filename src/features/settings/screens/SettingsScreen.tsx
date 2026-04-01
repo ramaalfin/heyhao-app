@@ -37,7 +37,7 @@ const SettingsScreen = () => {
 				navigation.navigate("MY_GROUPS" as never);
 				break;
 			case "CREATE":
-				navigation.navigate("CREATE_GROUP" as never);
+				navigation.navigate("MANAGE_GROUP" as never);
 				break;
 			default:
 				break;

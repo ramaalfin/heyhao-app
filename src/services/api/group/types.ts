@@ -56,7 +56,23 @@ export interface Person {
 	photo_url: string;
 }
 
-export interface ApiResponse<T> {
+export interface GroupCreateRequest {
+	name: string;
+	about: string;
+	photo: any; // Image picked from library
+}
+
+export interface GroupPaidCreateRequest extends GroupCreateRequest {
+	price: string;
+	benefit: string[];
+	assets: any[]; // Multiple files
+}
+
+export interface JoinGroupRequest {
+	group_id: string;
+}
+
+export interface ApiResponse<T = any> {
 	success: boolean;
 	message: string;
 	data: T;

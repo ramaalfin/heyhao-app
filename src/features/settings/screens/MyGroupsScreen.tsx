@@ -9,7 +9,7 @@ import {
 	View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import AwareView from "@components/AwareView";
@@ -47,9 +47,11 @@ const MyGroupsScreen = () => {
 		}
 	};
 
-	useEffect(() => {
-		fetchMyGroups();
-	}, []);
+	useFocusEffect(
+		React.useCallback(() => {
+			fetchMyGroups();
+		}, [])
+	);
 
 	const onRefresh = async () => {
 		setRefreshing(true);
@@ -58,16 +60,15 @@ const MyGroupsScreen = () => {
 	};
 
 	const handleGroupPress = (groupId: string) => {
-		navigation.navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId });
+		(navigation as any).navigate(HOME_SCREENS.GROUP_DETAIL_SCREEN, { groupId });
 	};
 
 	const handleManageGroup = (groupId: string) => {
-		// TODO: Implement manage group navigation when ManageGroupScreen is ready
-		console.log("Manage group:", groupId);
+		(navigation as any).navigate(SETTINGS_SCREENS.MANAGE_GROUP, { groupId });
 	};
 
 	const handleCreateGroup = () => {
-		navigation.navigate(SETTINGS_SCREENS.CREATE_GROUP as never);
+		(navigation as any).navigate(SETTINGS_SCREENS.MANAGE_GROUP);
 	};
 
 	const handleBack = () => {

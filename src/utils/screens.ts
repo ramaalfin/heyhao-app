@@ -30,8 +30,6 @@ export const SETTINGS_SCREENS = {
 	ACCOUNT: "Account Settings",
 	MY_GROUPS: "My Groups",
 	MANAGE_GROUP: "Manage Group",
-	EDIT_GROUP: "Edit Group",
-	CREATE_GROUP: "Create Group",
 } as const;
 
 export const PAYMENT_SCREENS = {

@@ -1,106 +1,307 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { Asset } from "react-native-image-picker";
 
 import AwareView from "@components/AwareView";
+import Button from "@components/Button";
+import TextInput from "@components/TextInput";
+import CurrencyInput from "@components/CurrencyInput";
 import HeaderBackButton from "@components/Header/HeaderBackButton";
-
-const ADMIN_ACTIONS = [
-	{id: "1", label: "Edit Group Details", icon: "edit", color: "#165dff", badge: null},
-	{id: "2", label: "Member Requests", icon: "people", color: "#30b22d", badge: "5"},
-	{id: "3", label: "Announcements", icon: "broadcast-on-home", color: "#f97316", badge: null},
-	{id: "4", label: "Group Rules", icon: "rule", color: "#442462", badge: null},
-	{id: "5", label: "Delete Group", icon: "delete", color: "#ed6b60", badge: null},
-];
+import useGroup from "@hooks/useGroup";
+import { photoUploader } from "@services/media/photoUploader";
+import apiClient from "@services/api/client/apiClient";
 
 const ManageGroupScreen = () => {
-	return (
-		<AwareView backgroundColor="bg-white">
-			<ScrollView
-				showsVerticalScrollIndicator={false}
-				className="w-full h-full bg-white">
-				{/* Header */}
-				<View className="px-4 pt-4 pb-6 border-b border-heyhao-border flex-row items-center">
-					<HeaderBackButton />
-					<Text className="text-2xl font-black text-heyhao-black ml-2">Manage Group</Text>
-				</View>
+  const navigation = useNavigation();
+  const route = useRoute();
+  const params = route.params as { groupId?: string; initialData?: any } | undefined;
+  const groupId = params?.groupId;
+  const initialData = params?.initialData;
 
-				<View className="p-4">
-					{/* Group Info Card */}
-					<View className="bg-heyhao-grey rounded-2xl p-4 mb-6 border border-heyhao-border">
-						<View className="flex-row items-center mb-3">
-							<View className="bg-heyhao-blue/10 w-12 h-12 rounded-xl items-center justify-center mr-3">
-								<Icon name="group" size={24} color="#165dff" />
-							</View>
-							<View className="flex-1">
-								<Text className="text-heyhao-black font-bold text-sm">React Native Developers</Text>
-								<Text className="text-heyhao-secondary text-xs">1,200 members • 45 posts</Text>
-							</View>
-						</View>
-					</View>
+  const {
+    createFreeGroup,
+    updateFreeGroup,
+    createPaidGroup,
+    updatePaidGroup,
+    isLoading
+  } = useGroup();
 
-					{/* Admin Actions */}
-					<Text className="text-sm font-bold text-heyhao-secondary uppercase tracking-widest mb-3">Admin Controls</Text>
-					<View className="bg-white rounded-2xl border border-heyhao-border overflow-hidden">
-						{ADMIN_ACTIONS.map((action, index) => (
-							<React.Fragment key={action.id}>
-								<TouchableOpacity 
-									className={`flex-row items-center justify-between py-4 px-4 active:bg-heyhao-grey ${
-										action.id === "5" ? "bg-heyhao-coral/5" : ""
-									}`}>
-									<View className="flex-row items-center flex-1">
-										<View 
-											style={{backgroundColor: action.color + "15"}}
-											className="w-10 h-10 rounded-xl items-center justify-center mr-3 border border-heyhao-border">
-											<Icon name={action.icon} size={20} color={action.color} />
-										</View>
-										<Text className={`font-bold text-sm ${
-											action.id === "5" ? "text-heyhao-coral" : "text-heyhao-black"
-										}`}>
-											{action.label}
-										</Text>
-									</View>
-									<View className="flex-row items-center gap-2">
-										{action.badge && (
-											<View className="bg-heyhao-green rounded-full px-2 py-1">
-												<Text className="text-white text-xs font-bold">{action.badge}</Text>
-											</View>
-										)}
-										<Icon name="chevron-right" size={20} color="#6a7686" />
-									</View>
-								</TouchableOpacity>
-								{index < ADMIN_ACTIONS.length - 1 && (
-									<View className="h-px bg-heyhao-border mx-4" />
-								)}
-							</React.Fragment>
-						))}
-					</View>
+  const [type, setType] = useState<"FREE" | "PAID">(initialData?.type || "FREE");
+  const [name, setName] = useState(initialData?.name || "");
+  const [about, setAbout] = useState(initialData?.about || "");
+  const [photo, setPhoto] = useState<Asset | null>(null);
 
-					{/* Stats */}
-					<View className="mt-8">
-						<Text className="text-sm font-bold text-heyhao-secondary uppercase tracking-widest mb-3">Statistics</Text>
-						<View className="flex-row gap-3">
-							<View className="flex-1 bg-heyhao-blue/10 rounded-2xl p-4 items-center border border-heyhao-blue/20">
-								<Icon name="people" size={24} color="#165dff" />
-								<Text className="text-heyhao-black font-bold text-lg mt-2">1.2K</Text>
-								<Text className="text-heyhao-secondary text-xs font-medium">Members</Text>
-							</View>
-							<View className="flex-1 bg-heyhao-green/10 rounded-2xl p-4 items-center border border-heyhao-green/20">
-								<Icon name="chat" size={24} color="#30b22d" />
-								<Text className="text-heyhao-black font-bold text-lg mt-2">45</Text>
-								<Text className="text-heyhao-secondary text-xs font-medium">Posts</Text>
-							</View>
-						</View>
-					</View>
-				</View>
-			</ScrollView>
-		</AwareView>
-	);
+  // Paid fields
+  const [price, setPrice] = useState(initialData?.price?.toString() || "");
+  const [benefit, setBenefit] = useState(initialData?.benefit?.join(", ") || "");
+  const [assets, setAssets] = useState<Asset[]>([]);
+
+  const isEdit = !!groupId;
+
+  useEffect(() => {
+    if (isEdit && !initialData) {
+      const fetchGroup = async () => {
+        try {
+          const data = await apiClient.group.getGroupById(groupId!);
+          setType(data.type);
+          setName(data.name);
+          setAbout(data.about);
+          setPrice(data.price?.toString() || "");
+          setBenefit(data.benefit?.join(", ") || "");
+        } catch (err) {
+          Alert.alert("Error", "Gagal memuat data grup");
+          navigation.goBack();
+        }
+      };
+      fetchGroup();
+    }
+  }, [groupId, isEdit, initialData]);
+
+  const handleSelectPhoto = async () => {
+    try {
+      const selected = await photoUploader.selectFromGallery();
+      if (selected) {
+        setPhoto(selected);
+      }
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "Gagal memilih foto");
+    }
+  };
+
+  const handleAddAsset = async () => {
+    try {
+      const selected = await photoUploader.selectFromGallery({ mediaType: "mixed" });
+      if (selected) {
+        setAssets([...assets, selected]);
+      }
+    } catch (err: any) {
+      Alert.alert("Error", "Gagal menambah aset");
+    }
+  };
+
+  const removeAsset = (index: number) => {
+    setAssets(assets.filter((_, i) => i !== index));
+  };
+
+  const handleCreateGroup = async () => {
+    if (!photo && !isEdit) {
+      Alert.alert("Peringatan", "Foto grup wajib diisi");
+      return;
+    }
+
+    try {
+      if (type === "FREE") {
+        if (isEdit) {
+          await updateFreeGroup(groupId!, { name, about, photo });
+        } else {
+          await createFreeGroup({ name, about, photo: photo! });
+        }
+      } else {
+        const benefitList = benefit.split(",").map((b: string) => b.trim()).filter((b: string) => b !== "");
+        if (benefitList.length === 0) {
+          Alert.alert("Peringatan", "Keuntungan (benefit) wajib diisi untuk grup berbayar");
+          return;
+        }
+
+        if (isEdit) {
+          await updatePaidGroup(groupId!, {
+            name,
+            about,
+            photo,
+            price,
+            benefit: benefitList,
+            assets
+          });
+        } else {
+          if (assets.length === 0) {
+            Alert.alert("Peringatan", "Aset minimal 1 file wajib diunggah untuk grup berbayar");
+            return;
+          }
+          await createPaidGroup({
+            name,
+            about,
+            photo: photo!,
+            price,
+            benefit: benefitList,
+            assets
+          });
+        }
+      }
+
+      Alert.alert("Sukses", `Grup berhasil ${isEdit ? "diperbarui" : "dibuat"}!`);
+      // navigate to my group screen
+      navigation.navigate("MY_GROUPS" as never);
+    } catch (err: any) {
+      // Error sudah ditangani di hook/parsed
+      Alert.alert(`Gagal ${isEdit ? "Memperbarui" : "Membuat"} Grup`, err.message || "Terjadi kesalahan");
+    }
+  };
+
+  return (
+    <AwareView backgroundColor="bg-white">
+      <View className="flex-1 bg-white">
+        {/* Header */}
+        <View className="px-4 pt-4 pb-4 border-b border-heyhao-border flex-row items-center">
+          <HeaderBackButton />
+          <Text className="text-2xl font-black text-heyhao-black ml-2">
+            {isEdit ? "Edit Grup" : "Buat Grup"}
+          </Text>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+          <View className="p-6">
+            {/* Type Selector - Hidden on Edit */}
+            {!isEdit && (
+              <View className="flex-row bg-heyhao-grey rounded-2xl p-1 mb-8">
+                <TouchableOpacity
+                  onPress={() => setType("FREE")}
+                  className={`flex-1 py-3 rounded-xl items-center ${type === "FREE" ? "bg-white shadow-sm" : ""}`}
+                >
+                  <Text className={`font-bold ${type === "FREE" ? "text-heyhao-blue" : "text-heyhao-secondary"}`}>Gratis</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setType("PAID")}
+                  className={`flex-1 py-3 rounded-xl items-center ${type === "PAID" ? "bg-white shadow-sm" : ""}`}
+                >
+                  <Text className={`font-bold ${type === "PAID" ? "text-heyhao-orange" : "text-heyhao-secondary"}`}>Berbayar (VIP)</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Photo Selection */}
+            <View className="items-center mb-8">
+              <TouchableOpacity
+                onPress={handleSelectPhoto}
+                className="w-32 h-32 rounded-3xl bg-heyhao-grey items-center justify-center border-2 border-dashed border-heyhao-border"
+              >
+                {photo ? (
+                  <Image source={{ uri: photo.uri }} className="w-full h-full rounded-3xl" />
+                ) : (
+                  <>
+                    <Icon name="add-a-photo" size={32} color="#6a7686" />
+                    <Text className="text-heyhao-secondary text-[10px] mt-2 font-bold">Foto Grup</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {/* Basic Info */}
+            <View className="gap-5 mb-8">
+              <View>
+                <Text className="text-heyhao-black font-bold text-sm mb-2 ml-1">Nama Grup</Text>
+                <TextInput
+                  onChangeText={setName}
+                  value={name}
+                  placeholder="Contoh: Belajar React Native"
+                  backgroundColor="bg-heyhao-grey"
+                  inputStyle="h-14 rounded-2xl px-4"
+                  editable={!isLoading}
+                />
+              </View>
+
+              <View>
+                <Text className="text-heyhao-black font-bold text-sm mb-2 ml-1">Deskripsi</Text>
+                <TextInput
+                  onChangeText={setAbout}
+                  value={about}
+                  placeholder="Jelaskan tentang apa grup ini..."
+                  backgroundColor="bg-heyhao-grey"
+                  multiline
+                  textAlignVertical="top"
+                  numberOfLines={4}
+                  inputStyle="h-32 rounded-2xl px-4 pt-4"
+                  editable={!isLoading}
+                />
+              </View>
+
+              {/* Paid Only Fields */}
+              {type === "PAID" && (
+                <View className="space-y-5">
+                  <View>
+                    <Text className="text-heyhao-black font-bold text-sm mb-2 ml-1">Harga (Rupiah)</Text>
+                    <CurrencyInput
+                      onChangeRaw={setPrice}
+                      value={price}
+                      placeholder="Contoh: 50.000"
+                      backgroundColor="bg-heyhao-grey"
+                      borderColor="border-transparent"
+                      inputStyle="h-14 rounded-2xl px-4"
+                      editable={!isLoading}
+                    />
+                  </View>
+
+                  <View>
+                    <Text className="text-heyhao-black font-bold text-sm mb-2 ml-1">Benefit (Pisahkan dengan koma)</Text>
+                    <TextInput
+                      onChangeText={setBenefit}
+                      value={benefit}
+                      placeholder="Materi Eksklusif, Live Q&A, Networking..."
+                      backgroundColor="bg-heyhao-grey"
+                      multiline
+                      inputStyle="h-24 rounded-2xl px-4 pt-4"
+                      editable={!isLoading}
+                    />
+                  </View>
+
+                  <View>
+                    <View className="flex-row items-center justify-between mb-2 ml-1">
+                      <Text className="text-heyhao-black font-bold text-sm">Aset Grup (File/Digital)</Text>
+                      <TouchableOpacity onPress={handleAddAsset}>
+                        <Text className="text-heyhao-blue text-xs font-bold">+ Tambah</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View className="flex-row flex-wrap gap-2">
+                      {assets.map((asset, index) => (
+                        <View key={index} className="bg-heyhao-blue/10 px-3 py-2 rounded-xl flex-row items-center border border-heyhao-blue/20">
+                          <Icon name="insert-drive-file" size={14} color="#165dff" />
+                          <Text className="text-heyhao-blue text-xs font-medium mx-2" numberOfLines={1} style={{ maxWidth: 100 }}>
+                            {asset.fileName || "File"}
+                          </Text>
+                          <TouchableOpacity onPress={() => removeAsset(index)}>
+                            <Icon name="close" size={14} color="#6a7686" />
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                      {assets.length === 0 && (
+                        <Text className="text-heyhao-secondary text-xs italic ml-1">Belum ada aset ditambahkan</Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Submit Button */}
+            <Button
+              onPress={handleCreateGroup}
+              label={isLoading ? "Memproses..." : `${isEdit ? "Update" : "Buat"} Grup ${type === "PAID" ? "VIP" : "Gratis"}`}
+              buttonBackground={type === "PAID" ? "bg-heyhao-orange" : "bg-heyhao-blue"}
+              borderRadius="rounded-2xl"
+              buttonHeight="h-14"
+              isDisabled={!name || !about || (!photo && !isEdit) || isLoading}
+            />
+
+            <View className="mt-8 p-4 bg-heyhao-grey rounded-2xl flex-row items-start">
+              <Icon name="info" size={20} color="#6a7686" />
+              <Text className="text-heyhao-secondary text-xs ml-3 flex-1 leading-relaxed">
+                Grup VIP memungkinkan Anda menjual konten eksklusif. Pastikan aset yang diunggah valid dan bermanfaat bagi anggota.
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+    </AwareView>
+  );
 };
 
 export default ManageGroupScreen;
