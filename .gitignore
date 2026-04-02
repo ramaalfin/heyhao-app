@@ -76,4 +76,5 @@ yarn-error.log
 
 .vscode
 .bundle
-package-lock.json
+
+.env
