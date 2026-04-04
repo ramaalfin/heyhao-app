@@ -1,77 +1,97 @@
-# 📱 `React Native Template (Enhanced)`
+# 📱 HeyHao Mobile App
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/30089055/199875237-07f734d0-4f60-4f9c-a66e-2e82a33aa410.png" width="100%" />
-  <a href="https://buymeacoffee.com/ghigaredr" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-</p>
+> Community Hub - Connect, Chat, and Grow Together
 
-This is an enhanced version of the original template by [Gabriel Higareda (@daboigbae)](https://github.com/daboigbae/react-native-template), refactored for **Feature-Driven Architecture** and strict TypeScript standards. It provides a scalable foundation with integrated navigation, state management, and styling.
+## 🚀 Quick Start
 
----
-
-## 🚀 Key Enhancements
-- **Feature-Driven Architecture**: Code is grouped by domain (e.g., `features/auth`, `features/profile`) for maximum scalability.
-- **Strict TypeScript**: Full type safety for Redux (hooks/slices) and Navigation.
-- **Optimized Performance**: Cleaned-up runtime hooks and removed production debug logs.
-- **Improved Aliases**: Clean path aliases (`@features`, `@components`, `@store`, `@services`) for cleaner imports.
-
-## 📦 Installed Packages
-- **State**: [@reduxjs/toolkit](https://redux-toolkit.js.org/), [redux-persist](https://github.com/rt2zz/redux-persist)
-- **Navigation**: [react-navigation](https://reactnavigation.org/) (Stack, Tab, Drawer)
-- **Styling**: [NativeWind (TailwindCSS)](https://www.nativewind.dev/)
-- **Logic**: [axios](https://github.com/axios/axios), [i18n-js](https://www.npmjs.com/package/i18n-js), [lodash](https://lodash.com/), [moment](https://momentjs.com/)
-- **UI/UX**: [lottie-react-native](https://github.com/lottie-react-native/lottie-react-native), [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
-
----
-
-## 🏃‍♀️ Running the App
-
-### 📦 Installation
 ```bash
+# Install dependencies
 npm install
-# or
-yarn install
-```
 
-### 📱 iOS
-```bash
+# iOS
 cd ios && pod install && cd ..
 npm run ios
-```
 
-### 📱 Android
-```bash
+# Android
 npm run android
 ```
 
----
+## 📦 Tech Stack
 
-## 🏗️ Folder Structure (Feature-Driven)
-```text
+- **React Native** 0.78.0
+- **TypeScript** - Full type safety
+- **Redux Toolkit** - State management
+- **React Navigation** - Navigation
+- **NativeWind** - TailwindCSS for React Native
+- **Axios** - API client
+
+## 🏗️ Project Structure
+
+```
 src/
-├── assets/         # Global images & animations
-├── components/     # Globally shared generic UI
-├── features/       # 🚀 Core functionality grouped by domain
-├── hooks/          # Global React hooks
-├── navigation/     # Stacks and Route definitions
-├── services/       # API clients and data providers
-├── store/          # Redux Toolkit setup
-└── utils/          # Constants and help functions
+├── features/        # Feature modules (auth, chat, groups, etc.)
+├── components/      # Reusable UI components
+├── navigation/      # Navigation configuration
+├── services/        # API services
+├── store/           # Redux store
+├── hooks/           # Custom hooks
+└── utils/           # Utilities & helpers
 ```
 
+## 🎯 Key Features
+
+- 🔐 Authentication (Sign In/Sign Up)
+- 💬 Real-time Chat
+- 👥 Group Management
+- 💰 Revenue & Payments
+- 🔍 Discover Communities
+- ⚙️ Settings & Profile
+
+## 📱 Screens
+
+- **Auth**: Landing, Sign In, Sign Up, Forgot Password
+- **Home**: Main feed, Discover, Chat, Settings
+- **Groups**: All Groups, Group Detail, My Groups
+- **Revenue**: Revenue Overview, Withdraw, Payouts
+- **Chat**: Chat List, Active Chat
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create `.env` file:
+```env
+BASE_URL_API=http://localhost:3000/api/v1
+```
+
+### Path Aliases
+
+```typescript
+@features    → src/features
+@components  → src/components
+@store       → src/store
+@services    → src/services
+@hooks       → src/hooks
+@utils       → src/utils
+```
+
+## 📝 Development
+
+```bash
+# Start Metro bundler
+npm start
+
+# Run tests
+npm test
+
+# Lint code
+npm run lint
+```
+
+## 📄 License
+
+MIT License
+
 ---
 
-## 🙏 Original Credits & Support
-Original Template created by **Gabriel Higareda**.
-Sponsored by **Digital Art Dealers**.
-
-Please give this project a ⭐️ to show your support!
-
-- [Original Template Repository](https://github.com/daboigbae/react-native-template)
-- [Follow @daboigbae on Twitter](https://twitter.com/daboigbae)
-- [Digital Art Dealers Website](https://digitalartdealers.net/)
-
----
-
-### License
-MIT License - Copyright (c) 2022 Gabriel Higareda
+Built with ❤️ for the community
